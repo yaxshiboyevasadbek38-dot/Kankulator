@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kalkulyator</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="calculator">
+        <div class="display">
+            <div id="history"></div>
+            <div id="result">0</div>
+        </div>
+
+        <div class="buttons">
+            <button class="clear" onclick="clearDisplay()">AC</button>
+            <button onclick="deleteLast()">⌫</button>
+            <button class="operator" onclick="addValue('%')">%</button>
+            <button class="operator" onclick="addValue('/')">÷</button>
+
+            <button onclick="addValue('7')">7</button>
+            <button onclick="addValue('8')">8</button>
+            <button onclick="addValue('9')">9</button>
+            <button class="operator" onclick="addValue('*')">×</button>
+
+            <button onclick="addValue('4')">4</button>
+            <button onclick="addValue('5')">5</button>
+            <button onclick="addValue('6')">6</button>
+            <button class="operator" onclick="addValue('-')">−</button>
+
+            <button onclick="addValue('1')">1</button>
+            <button onclick="addValue('2')">2</button>
+            <button onclick="addValue('3')">3</button>
+            <button class="operator" onclick="addValue('+')">+</button>
+
+            <button class="zero" onclick="addValue('0')">0</button>
+            <button onclick="addValue('.')">.</button>
+            <button class="equals" onclick="calculate()">=</button>
+        </div>
+    </div>
+
+    <script>
+        let expression = "";
+
+        const result = document.getElementById("result");
+        const history = document.getElementById("history");
+
+        function addValue(value) {
+            expression += value;
+            result.textContent = expression
+                .replace(/\*/g, "×")
+                .replace(/\//g, "÷");
+        }
+
+        function clearDisplay() {
+            expression = "";
+            result.textContent = "0";
+            history.textContent = "";
+        }
+
+        function deleteLast() {
+            expression = expression.slice(0, -1);
+
+            result.textContent = expression
+                ? expression.replace(/\*/g, "×").replace(/\//g, "÷")
+                : "0";
+        }
+
+        function calculate() {
+            if (!expression) return;
+
+            try {
+                let answer = Function('"use strict"; return (' + expression + ')')();
+
+                history.textContent = expression
+                    .replace(/\*/g, "×")
+                    .replace(/\//g, "÷") + " =";
+
+                result.textContent = answer;
+                expression = answer.toString();
+            } catch {
+                result.textContent = "Xato";
+                expression = "";
+            }
+        }
+
+        document.addEventListener("keydown", function(event) {
+            const key = event.key;
+
+            if ("0123456789.+-*/%".includes(key)) {
+                addValue(key);
+            }
+
+            if (key === "Enter" || key === "=") {
+                calculate();
+            }
+
+            if (key === "Backspace") {
+                deleteLast();
+            }
+
+            if (key === "Escape") {
+                clearDisplay();
+            }
+        });
+    </script>
+
+</body>
+</html>
